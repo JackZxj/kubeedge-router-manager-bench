@@ -44,7 +44,7 @@ func RunEventbusPub(mqttUrl, mqttTocic, msg, msgBinary string, num, concurrency 
 	log.Println("Sending end:", endTime.UTC())
 	resChan.DoneChan <- true
 	client.Disconnect(250)
-	log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spanding: %v",
+	log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spending: %v",
 		num, resChan.FailedCount, endTime.Sub(startTime))
 	return nil
 }

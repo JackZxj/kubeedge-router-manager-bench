@@ -18,7 +18,8 @@ func RunRestSub(rest string, num int) error {
 	bucket := make(chan bool, 1024)
 	var once sync.Once
 	var startTime time.Time
-	timeout := time.Second * time.Duration(300)
+	timeoutInSecond := 300
+	timeout := time.Second * time.Duration(timeoutInSecond)
 
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		defer fmt.Fprintf(w, "ok\n")
@@ -44,7 +45,9 @@ func RunRestSub(rest string, num int) error {
 
 	go func() {
 		http.HandleFunc("/"+url[1], handler)
-		http.ListenAndServe(url[0], nil)
+		if err := http.ListenAndServe(url[0], nil); err != nil {
+			log.Panic(err)
+		}
 	}()
 
 LOOP:
@@ -52,15 +55,15 @@ LOOP:
 		select {
 		case <-time.After(timeout):
 			endTime := time.Now()
-			log.Printf("Test done. Sum: %d, Faild: %d, Time-Spanding: %v",
-				num, num-receiveCount, endTime.Sub(startTime.Add(timeout)))
+			log.Printf("It timed out %d seconds.\nSum: %d, Faild: %d, Time-Spending: %v",
+				timeoutInSecond, num, num-receiveCount, endTime.Sub(startTime.Add(timeout)))
 			break LOOP
 		case <-bucket:
 			receiveCount++
 			if receiveCount >= num {
 				endTime := time.Now()
-				log.Printf("Test done. Sum: %d, Faild: %d, Time-Spanding: %v",
-					num, receiveCount, endTime.Sub(startTime))
+				log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spending: %v",
+					num, num-receiveCount, endTime.Sub(startTime))
 				break LOOP
 			}
 		}

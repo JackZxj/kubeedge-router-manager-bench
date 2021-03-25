@@ -2,6 +2,7 @@ package re
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/JackZxj/kubeedge-router-manager-bench/util"
@@ -16,18 +17,21 @@ func RunEventbusSub(mqttUrl, mqttTocic string, num int) error {
 		TimeoutInSecond: 300,
 	}
 	choke := make(chan []byte, 1024)
-
+	var once sync.Once
+	var startTime time.Time
 	handler := func(client MQTT.Client, msg MQTT.Message) {
 		choke <- msg.Payload()
+		once.Do(func() {
+			startTime = time.Now()
+		})
 	}
 
 	client := MQTT.NewClient(cli.NewMQTTClientOptions(handler))
 	receiveCount := 0
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		panic(token.Error())
+		return token.Error()
 	}
 
-	startTime := time.Now()
 	if token := client.Subscribe(cli.Topic, cli.QoS, nil); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
@@ -39,15 +43,15 @@ LOOP:
 		select {
 		case <-time.After(timeout):
 			endTime := time.Now()
-			log.Printf("Test done. Sum: %d, Faild: %d, Time-Spanding: %v",
-				num, num-receiveCount, endTime.Sub(startTime.Add(timeout)))
+			log.Printf("It timed out %d seconds.\nSum: %d, Faild: %d, Time-Spending: %v",
+				cli.TimeoutInSecond, num, num-receiveCount, endTime.Sub(startTime.Add(timeout)))
 			break LOOP
 		case <-choke:
 			receiveCount++
 			if receiveCount >= num {
 				endTime := time.Now()
-				log.Printf("Test done. Sum: %d, Faild: %d, Time-Spanding: %v",
-					num, receiveCount, endTime.Sub(startTime))
+				log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spending: %v",
+					num, num-receiveCount, endTime.Sub(startTime))
 				break LOOP
 			}
 		}

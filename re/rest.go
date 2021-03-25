@@ -52,7 +52,8 @@ func RunRestPub(rest, restMethod, msg, msgBinary string, num, concurrency int) e
 			_, err := hanler(rest, msgToSend)
 			if err != nil {
 				resChan.FailedChan <- 1
-				log.Panic("Request failed:", err)
+				// Panic 会 crash 掉整个进程
+				log.Print("Request failed:", err)
 			}
 		}()
 	}
@@ -60,7 +61,7 @@ func RunRestPub(rest, restMethod, msg, msgBinary string, num, concurrency int) e
 	endTime := time.Now()
 	log.Println("Sending end:", endTime.UTC())
 	resChan.DoneChan <- true
-	log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spanding: %v",
+	log.Printf("Test done.\nSum: %d, Faild: %d, Time-Spending: %v",
 		num, resChan.FailedCount, endTime.Sub(startTime))
 	return nil
 }
