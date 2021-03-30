@@ -14,11 +14,14 @@ func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
-func RunRestSub(rest string, num int) error {
+func RunRestSub(rest string, num, timeoutInSecond int) error {
 	bucket := make(chan bool, 1024)
 	var once sync.Once
 	var startTime time.Time
-	timeoutInSecond := 300
+	if timeoutInSecond < 0 {
+		log.Println("Warning: timeout option does not support negative number, adjust to 60")
+		timeoutInSecond = 60
+	}
 	timeout := time.Second * time.Duration(timeoutInSecond)
 
 	handler := func(w http.ResponseWriter, r *http.Request) {

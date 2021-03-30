@@ -20,6 +20,7 @@ var msg string
 var msgBinary string
 var num int
 var concurrency int
+var timeoutInSecond int
 
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
@@ -49,6 +50,8 @@ func init() {
 
 	flag.IntVar(&concurrency, "concurrency", 1, "Maximum concurrency for sending.")
 	flag.IntVar(&concurrency, "c", 1, "Maximum concurrency for sending.")
+
+	flag.IntVar(&timeoutInSecond, "timeout", 300, "The maximum time in seconds to wait for the next message")
 }
 
 func main() {
@@ -81,7 +84,7 @@ func run() error {
 			return re.RunRestPub(rest, restMethod, msg, msgBinary, num, concurrency)
 		} else {
 			// log.Println(banchType, mqttUrl, mqttTocic)
-			return re.RunEventbusSub(mqttUrl, mqttTocic, num)
+			return re.RunEventbusSub(mqttUrl, mqttTocic, num, timeoutInSecond)
 		}
 	case "er":
 		if rest == "" && mqttTocic == "" {
@@ -95,7 +98,7 @@ func run() error {
 			return er.RunEventbusPub(mqttUrl, mqttTocic, msg, msgBinary, num, concurrency)
 		} else {
 			// log.Println(banchType, rest)
-			return er.RunRestSub(rest, num)
+			return er.RunRestSub(rest, num, timeoutInSecond)
 		}
 	default:
 		return errors.New("unknown type")

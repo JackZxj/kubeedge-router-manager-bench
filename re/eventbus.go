@@ -9,12 +9,16 @@ import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
-func RunEventbusSub(mqttUrl, mqttTocic string, num int) error {
+func RunEventbusSub(mqttUrl, mqttTocic string, num, timeoutInSecond int) error {
+	if timeoutInSecond < 0 {
+		log.Println("Warning: timeout option does not support negative number, adjust to 60")
+		timeoutInSecond = 60
+	}
 	cli := &util.Client{
 		Url:             mqttUrl,
 		Topic:           mqttTocic,
 		QoS:             1,
-		TimeoutInSecond: 300,
+		TimeoutInSecond: timeoutInSecond,
 	}
 	choke := make(chan []byte, 1024)
 	var once sync.Once
