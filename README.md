@@ -84,7 +84,7 @@ Usage of ./kubeedge-router-manager-bench:
     $ ./kubeedge-router-manager-bench -t re -b tcp://127.0.0.1:1883 -e test -n 100
 
     # Run on Cloud
-    # $ ./kubeedge-router-manager-bench -t re -r REST_URL -m MESSAGE [-n EXPECT_NUM] [-c CONCURRENCY_NUM]
+    # $ ./kubeedge-router-manager-bench -t re -r REST_URL -m MESSAGE [-mb BINARY_MESSAGE] [-n EXPECT_NUM] [-c CONCURRENCY_NUM]
     $ ./kubeedge-router-manager-bench -t re -r http://127.0.0.1:9443/centos78-edge-0/default/a -m "hello" -n 100
     ```
 
@@ -114,8 +114,8 @@ Usage of ./kubeedge-router-manager-bench:
     $ ./kubeedge-router-manager-bench -t er -r 127.0.0.1:8080/test-1 -n 100
 
     # Run on edge
-    # $ ./kubeedge-router-manager-bench -t er [-b MQTT_BROKER_URL] -e EVENTBUS_TOPIC [-n EXPECT_NUM]
-    $ ./kubeedge-router-manager-bench -t er -b tcp://127.0.0.1:1883 -e "default/test-1" -m "hello" -n 100 -c 3
+    # $ ./kubeedge-router-manager-bench -t er [-b MQTT_BROKER_URL] -e EVENTBUS_TOPIC -m MESSAGE [-mb BINARY_MESSAGE] [-n EXPECT_NUM] [-c CONCURRENCY_NUM]
+    $ ./kubeedge-router-manager-bench -t er -b tcp://127.0.0.1:1883 -e "default/test-1" -m "hello" -n 100
     ```
 
 ## Result
