@@ -10,12 +10,6 @@ import (
 	"github.com/JackZxj/kubeedge-router-manager-bench/util"
 )
 
-type resultChan struct {
-	failedChan  chan int
-	doneChan    chan bool
-	failedCount int
-}
-
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
